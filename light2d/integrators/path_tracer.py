@@ -2,7 +2,6 @@
 Definition of the path tracer integrator.
 """
 
-from this import d
 from typing import Callable
 
 import numpy as np
@@ -58,8 +57,8 @@ class PathTracer(Integrator):
 
         @njit
         def trace(ray: Ray) -> Spectrum:
-            interaction = SurfaceInteraction(np.empty(12, np.float32))
-            li_sum = Spectrum(np.zeros(3, np.float32))
+            interaction = np.empty(12, np.float32)
+            li_sum = np.zeros(3, np.float32)
             net_attenuation = np.ones(3, np.float32)
 
             for _ in range(n_steps):
@@ -74,7 +73,7 @@ class PathTracer(Integrator):
                 get_scattered_ray(ray, interaction)
 
             while True:
-                if not np.random.uniform() < russian_roulette_q or \
+                if not np.float32(np.random.uniform(0, 1)) < russian_roulette_q or \
                    not entity_intersect(ray, interaction):
                     return li_sum
                 li = interaction[4:7]
@@ -90,12 +89,13 @@ class PathTracer(Integrator):
         def integrate(region: AlignedBox) -> Spectrum:
             x_range = np.linspace(region[0, 0], region[1, 0], n_samples + 1)
             y_range = np.linspace(region[0, 1], region[1, 1], n_samples + 1)
-            angle_range = np.linspace(np.float32(0), np.float32(np.pi * 2), np.square(n_samples) + 1)
-            angle_order = np.arange(np.square(n_samples))
+            angle_range = np.linspace(np.float32(0), np.float32(np.pi * 2),
+                                      np.square(n_samples) + 1)
+            angle_order = np.arange(np.int32(np.square(n_samples)))
             np.random.shuffle(angle_order)
 
             k = np.uint32(0)
-            ray = Ray(np.empty(5, np.float32))
+            ray = np.empty(5, np.float32)
             li_sum = np.zeros(3, np.float32)
             valid_count = np.uint32(0)
 
@@ -112,7 +112,7 @@ class PathTracer(Integrator):
 
                     ray[0] = np.random.uniform(x_min, x_max)
                     ray[1] = np.random.uniform(y_min, y_max)
-                    angle = np.random.uniform(angle_min, angle_max)
+                    angle = np.float32(np.random.uniform(angle_min, angle_max))
                     ray[2] = np.cos(angle)
                     ray[3] = np.sin(angle)
                     ray[4] = np.inf
@@ -122,6 +122,6 @@ class PathTracer(Integrator):
                         li_sum += li
                         valid_count += np.uint32(1)
 
-            return Spectrum(li_sum / np.float32(valid_count))
+            return li_sum / np.float32(valid_count)
 
         return integrate
