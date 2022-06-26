@@ -24,8 +24,12 @@ def render(entity: Entity, integrator: Integrator,
       x and y coordinates.
     * `film_size` is the width and height of the film. It should have the same aspect ratio as the
       specified region.
-    * The return value is a float32 array of shape `(film_size[1], film_size[0], 3)`, representing
-      the rendered image.
+    * `n_tiles` controls the multiprocessing setting. If this value is not greater than 1, rendering
+      is performed on a single process. Otherwise, if this value is greater than 1, the image is
+      uniformly splitted into a `n_tiles`-by-`n_tiles` grid of tiles, where each tile is rendered on
+      a separate process. Therefore, there are `n_tiles ^ 2` rendering processes in total.
+    * The return value is the rendered image represented by a float32 array of shape
+      `(film_size[1], film_size[0], 3)`.
     """
     integrate = integrator.integrate_function(entity)
     region = np.array(region, np.float32)
