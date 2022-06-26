@@ -33,20 +33,18 @@ A ray is represented by a 1-D float32 array of length 5.
 
 SurfaceInteraction = NewType('SurfaceInteraction', F32Array)
 """
-A surface interaction is represented by a 1-D float32 array of length 14.
+A surface interaction is represented by a 1-D float32 array of length 12.
 
 * `p`: Point of the ray-entity intersection. It takes elements [0, 2) of this array.
-* `p_error`: Absolute uncertainty of `p` due to rounding error. It takes elements [2, 4) of this
-  array.
 * `n`: Outward-pointing normal vector of the surface which may not necessarily be normalized. It
-  takes elements [4, 6) of this array.
-* `li`: Light intensity from the material. It takes elements [6, 9) of this array. It should be set
+  takes elements [2, 4) of this array.
+* `li`: Light intensity from the material. It takes elements [4, 7) of this array. It should be set
   to zeros if the material is not emissive.
 * `attenuation`: Attenuation applied to the traced light intensity of the scattered ray. It takes
-  elements [9, 12) of this array. If none of its components is positive, the ray will not be
+  elements [7, 10) of this array. If none of its components is positive, the ray will not be
   scattered and the `d_out` field is undefined.
 * `d_out`: If the ray will be scattered, this fields represents the direction of the scattered ray.
-  It takes elements [12, 14) of this array.
+  It takes elements [10, 12) of this array.
 """
 
 
@@ -70,9 +68,9 @@ class Shape(ABC):
 
         * The first argument of the returned function is a ray. Its `t_max` field will be updated
           on an intersection.
-        * The second argument of the returned function is a surface interaction. Its `p`, `p_error`
-          and `n` fields will be updated on an intersection. Remaining fields of the surface
-          interaction are left unchanged and should be updated later by a material instance.
+        * The second argument of the returned function is a surface interaction. Its `p` and `n`
+          fields will be updated on an intersection. Remaining fields of the surface interaction are
+          left unchanged and should be updated later by a material instance.
         * The return value of the returned function indicates whether there is an intersection.
         """
         ...
@@ -91,9 +89,9 @@ class Material(ABC):
 
         * The first argument of the returned function is a ray. Its value should not be changed by
           this function.
-        * The second argument of the returned function is a surface interaction. Its `p`, `p_error`,
-          and `n` fields (which should already been set by a shape instance) are not changed, while
-          its `li`, `attenuation`, and `d_out` fields are updated.
+        * The second argument of the returned function is a surface interaction. Its `p` and `n`
+          fields (which should already been set by a shape instance) are not changed, while its
+          `li`, `attenuation`, and `d_out` fields are updated.
         """
         ...
 
