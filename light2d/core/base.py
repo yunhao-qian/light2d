@@ -9,7 +9,26 @@ import numpy as np
 import numpy.typing as npt
 
 
+EPSILON = np.float32(1e-4)
+"""
+A parameter used to eliminate self-intersections of scattered rays due to rounding errors of
+floating-point numbers.
+
+For every scattered ray, the origin is shifted from the intersection point along the normal
+direction of the surface (or its opposite, depending on the direction of the scattered ray) by a
+distance of `EPSILON`.
+"""
+
 F32Array = npt.NDArray[np.float32]
+
+Spectrum = NewType('Spectrum', F32Array)
+"""
+A spectrum is represented by a 1-D float32 array of length 3.
+
+* `r`: The red channel. It takes element 0 of this array.
+* `g`: The green channel. It takes element 1 of this array.
+* `b`: The blue channel. It takes element 2 of this array.
+"""
 
 AlignedBox = NewType('AlignedBox', F32Array)
 """
@@ -123,14 +142,13 @@ class Integrator(ABC):
     """
 
     @abstractmethod
-    def integrate_function(self, entity: Entity) -> Callable[[AlignedBox], F32Array]:
+    def integrate_function(self, entity: Entity) -> Callable[[AlignedBox], Spectrum]:
         """
         Given an entity, returns a JIT-ed function for calculating the light intensity of a given
         pixel.
 
         * The first (and only) argument of the returned function is an axis-aligned box representing
           the region occupied by this pixel.
-        * The return value of the returned function is a 1-D float32 array of length 3 representing
-          the light intensity of this pixel.
+        * The return value of the returned function is the light intensity of this pixel.
         """
         ...
