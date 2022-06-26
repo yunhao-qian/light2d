@@ -6,6 +6,7 @@ from multiprocessing import Pool
 
 import numpy as np
 from numba import njit
+from PIL import Image
 
 from .base import AlignedBox, Entity, F32Array, Integrator
 
@@ -13,6 +14,19 @@ from .base import AlignedBox, Entity, F32Array, Integrator
 def render(entity: Entity, integrator: Integrator,
            region: tuple[tuple[float, float], tuple[float, float]],
            film_size: tuple[int, int], n_tiles: int = 1) -> F32Array:
+    """
+    Renders an image of the given entity with the specified parameters.
+
+    * `entity` is the entity being rendered.
+    * `integrator` is the integrator used to calculate light intensities of pixels.
+    * `region` specified the region (in the entity's coordinate system) to be rendered. The first
+      element of the tuple is the minimum x and y coordinates, and the second element is the maximum
+      x and y coordinates.
+    * `film_size` is the width and height of the film. It should have the same aspect ratio as the
+      specified region.
+    * The return value is a float32 array of shape `(film_size[1], film_size[0], 3)`, representing
+      the rendered image.
+    """
     integrate = integrator.integrate_function(entity)
     region = np.array(region, np.float32)
 
@@ -80,3 +94,20 @@ def render(entity: Entity, integrator: Integrator,
     for tile, ((row_min, row_max), (col_min, col_max)) in zip(tiles, tile_indices):
         film[row_min:row_max, col_min:col_max] = tile
     return film
+
+
+def save(film: F32Array, filename: str, gamma: float = 2.2) -> None:
+    """
+    Saves the rendered image into an image file.
+
+    * `film` is the rendered image.
+    * `filename` is the name of the image file.
+    * `gamma` is used for gamma correction. The color space of the saved image is assumed to be
+      sRGB, so the default gamma value is 2.2. Set this value to 1 if no gamma correction should be
+      performed.
+    """
+    film = np.power(film, np.float32(1 / gamma))
+    film *= 255
+    np.clip(film, 0, 255, out=film)
+    film = np.flipud(film.astype(np.uint8))
+    Image.fromarray(film, 'RGB').save(filename)

@@ -52,7 +52,7 @@ class Circle(Shape):
                 t = t1
             else:
                 t2 = (d_oc + sqrt_delta) / d_norm
-                if 0 < t1 < t_max:
+                if 0 < t2 < t_max:
                     t = t2
                 else:
                     return False

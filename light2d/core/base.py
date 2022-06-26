@@ -25,9 +25,9 @@ Spectrum = NewType('Spectrum', F32Array)
 """
 A spectrum is represented by a 1-D float32 array of length 3.
 
-* `r`: The red channel. It takes element 0 of this array.
-* `g`: The green channel. It takes element 1 of this array.
-* `b`: The blue channel. It takes element 2 of this array.
+* `r`: Red channel. It takes element 0 of this array.
+* `g`: Green channel. It takes element 1 of this array.
+* `b`: Blue channel. It takes element 2 of this array.
 """
 
 AlignedBox = NewType('AlignedBox', F32Array)
@@ -138,7 +138,7 @@ class Entity(ABC):
 class Integrator(ABC):
     """
     Base class of integrators. An integrator calculates the light intensity of each pixel, which
-    directly corresponds to the pixel color in the output picture.
+    directly corresponds to the pixel color in the output image.
     """
 
     @abstractmethod
