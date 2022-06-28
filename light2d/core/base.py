@@ -120,6 +120,14 @@ class Entity(ABC):
     Base class of entities. An entity is the combination of consisting shapes and materials.
     """
 
+    @property
+    @abstractmethod
+    def bounds(self) -> AlignedBox:
+      """
+      Returns the axis-aligned bounding box of this entity.
+      """
+      ...
+
     @abstractmethod
     def intersect_function(self) -> Callable[[Ray, SurfaceInteraction], bool]:
         """

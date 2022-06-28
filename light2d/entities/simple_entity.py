@@ -6,7 +6,7 @@ from typing import Callable
 
 from numba import njit
 
-from ..core.base import Entity, Material, Ray, Shape, SurfaceInteraction
+from ..core.base import AlignedBox, Entity, Material, Ray, Shape, SurfaceInteraction
 
 
 class SimpleEntity(Entity):
@@ -20,6 +20,10 @@ class SimpleEntity(Entity):
         """
         self.shape = shape
         self.material = material
+
+    @property
+    def bounds(self) -> AlignedBox:
+        return self.shape.bounds
 
     def intersect_function(self) -> Callable[[Ray, SurfaceInteraction], bool]:
         shape_intersect = self.shape.intersect_function()
