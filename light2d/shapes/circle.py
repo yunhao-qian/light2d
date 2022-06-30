@@ -26,6 +26,7 @@ class Circle(Shape):
     def bounds(self) -> AlignedBox:
         return np.stack((self.center - self.radius, self.center + self.radius))
 
+    @property
     def intersect_function(self) -> Callable[[Ray, SurfaceInteraction], bool]:
         center = self.center
         radius = self.radius

@@ -80,6 +80,7 @@ class Shape(ABC):
         """
         ...
 
+    @property
     @abstractmethod
     def intersect_function(self) -> Callable[[Ray, SurfaceInteraction], bool]:
         """
@@ -101,6 +102,7 @@ class Material(ABC):
     intersection.
     """
 
+    @property
     @abstractmethod
     def scatter_function(self) -> Callable[[Ray, SurfaceInteraction], None]:
         """
@@ -128,6 +130,7 @@ class Entity(ABC):
         """
         ...
 
+    @property
     @abstractmethod
     def intersect_function(self) -> Callable[[Ray, SurfaceInteraction], bool]:
         """
@@ -149,6 +152,7 @@ class Integrator(ABC):
     intensity of each pixel, which directly corresponds to the pixel color in the output image.
     """
 
+    @property
     @abstractmethod
     def integrate_function(self) -> Callable[[AlignedBox], Spectrum]:
         """

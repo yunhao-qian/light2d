@@ -23,6 +23,7 @@ class ConstantLight(Material):
         """
         self.li = np.array(li, np.float32)
 
+    @property
     def scatter_function(self) -> Callable[[Ray, SurfaceInteraction], None]:
         li = self.li
 

@@ -25,8 +25,9 @@ class FlatAggregate(Entity):
     def bounds(self) -> AlignedBox:
         return aligned_box_union(e.bounds for e in self.entities)
 
+    @property
     def intersect_function(self) -> Callable[[Ray, SurfaceInteraction], bool]:
-        entities_intersect = tuple(e.intersect_function() for e in self.entities)
+        entities_intersect = tuple(e.intersect_function for e in self.entities)
 
         @njit
         def intersect(ray: Ray, interaction: SurfaceInteraction) -> bool:

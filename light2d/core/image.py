@@ -29,7 +29,7 @@ def render(integrator: Integrator, region: tuple[tuple[float, float], tuple[floa
     * The return value is the rendered image represented by a float32 array of shape
       `(film_size[1], film_size[0], 3)`.
     """
-    integrate = integrator.integrate_function()
+    integrate = integrator.integrate_function
     region = np.array(region, np.float32)
 
     @njit

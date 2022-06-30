@@ -25,9 +25,10 @@ class SimpleEntity(Entity):
     def bounds(self) -> AlignedBox:
         return self.shape.bounds
 
+    @property
     def intersect_function(self) -> Callable[[Ray, SurfaceInteraction], bool]:
-        shape_intersect = self.shape.intersect_function()
-        material_scatter = self.material.scatter_function()
+        shape_intersect = self.shape.intersect_function
+        material_scatter = self.material.scatter_function
 
         @njit
         def intersect(ray: Ray, interaction: SurfaceInteraction) -> bool:
