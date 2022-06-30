@@ -26,20 +26,22 @@ class PathTracer(Integrator):
     able to calculate an unbiased estimate of the sum of light intensities along the light path.
     """
 
-    def __init__(self, n_samples: int, n_steps: int = 3, russian_roulette_q: float = 0.05):
+    def __init__(self, entity: Entity, n_samples: int, n_steps: int = 3,
+                 russian_roulette_q: float = 0.05):
         """
-        Creates a path tracer with the specified parameters. See the class documentation for
-        details about the parameters.
+        Creates a path tracer for the given entity with the specified parameters. See the class
+        documentation for details about the parameters.
         """
+        self.entity = entity
         self.n_samples = np.uint32(n_samples)
         self.n_steps = np.uint32(n_steps)
         self.russian_roulette_q = np.float32(russian_roulette_q)
 
-    def integrate_function(self, entity: Entity) -> Callable[[AlignedBox], Spectrum]:
+    def integrate_function(self) -> Callable[[AlignedBox], Spectrum]:
         n_samples = self.n_samples
         n_steps = self.n_steps
         russian_roulette_q = self.russian_roulette_q
-        entity_intersect = entity.intersect_function()
+        entity_intersect = self.entity.intersect_function()
 
         @njit
         def get_scattered_ray(ray: Ray, interaction: SurfaceInteraction) -> None:

@@ -123,10 +123,10 @@ class Entity(ABC):
     @property
     @abstractmethod
     def bounds(self) -> AlignedBox:
-      """
-      Returns the axis-aligned bounding box of this entity.
-      """
-      ...
+        """
+        Returns the axis-aligned bounding box of this entity.
+        """
+        ...
 
     @abstractmethod
     def intersect_function(self) -> Callable[[Ray, SurfaceInteraction], bool]:
@@ -145,15 +145,14 @@ class Entity(ABC):
 
 class Integrator(ABC):
     """
-    Base class of integrators. An integrator calculates the light intensity of each pixel, which
-    directly corresponds to the pixel color in the output image.
+    Base class of integrators. An integrator usually takes an entity and then calculates the light
+    intensity of each pixel, which directly corresponds to the pixel color in the output image.
     """
 
     @abstractmethod
-    def integrate_function(self, entity: Entity) -> Callable[[AlignedBox], Spectrum]:
+    def integrate_function(self) -> Callable[[AlignedBox], Spectrum]:
         """
-        Given an entity, returns a JIT-ed function for calculating the light intensity of a given
-        pixel.
+        Returns a JIT-ed function for calculating the light intensity of a given pixel.
 
         * The first (and only) argument of the returned function is an axis-aligned box representing
           the region occupied by this pixel.

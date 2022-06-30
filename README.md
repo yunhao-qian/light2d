@@ -26,16 +26,16 @@ The following code from `examples/hello_circle/hello_circle.py` renders a blue e
 
 ```python
 film = light2d.render(
-    entity=entities.SimpleEntity(
-        shape=shapes.Circle(
-            center=(0, 0),
-            radius=1,
-        ),
-        material=materials.ConstantLight(
-            li=(0.6, 0.8, 1.0),
-        ),
-    ),
     integrator=integrators.PathTracer(
+        entity=entities.SimpleEntity(
+            shape=shapes.Circle(
+                center=(0, 0),
+                radius=1,
+            ),
+            material=materials.ConstantLight(
+                li=(0.6, 0.8, 1.0),
+            ),
+        ),
         n_samples=16,
     ),
     region=((-2, -2), (2, 2)),

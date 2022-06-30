@@ -11,13 +11,11 @@ from PIL import Image
 from .base import AlignedBox, Entity, F32Array, Integrator
 
 
-def render(entity: Entity, integrator: Integrator,
-           region: tuple[tuple[float, float], tuple[float, float]],
+def render(integrator: Integrator, region: tuple[tuple[float, float], tuple[float, float]],
            film_size: tuple[int, int], n_tiles: int = 1) -> F32Array:
     """
     Renders an image of the given entity with the specified parameters.
 
-    * `entity` is the entity being rendered.
     * `integrator` is the integrator used to calculate light intensities of pixels.
     * `region` specified the region (in the entity's coordinate system) to be rendered. The first
       element of the tuple is the minimum x and y coordinates, and the second element is the maximum
@@ -31,7 +29,7 @@ def render(entity: Entity, integrator: Integrator,
     * The return value is the rendered image represented by a float32 array of shape
       `(film_size[1], film_size[0], 3)`.
     """
-    integrate = integrator.integrate_function(entity)
+    integrate = integrator.integrate_function()
     region = np.array(region, np.float32)
 
     @njit
