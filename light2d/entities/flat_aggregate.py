@@ -6,7 +6,7 @@ from typing import Callable, Iterable
 
 from numba import literal_unroll, njit
 
-from ..core.base import AlignedBox, Entity, Material, Ray, Shape, SurfaceInteraction
+from ..core.base import AlignedBox, Entity, Ray, SurfaceInteraction
 from ..core.utils import aligned_box_union
 
 
@@ -19,14 +19,13 @@ class FlatAggregate(Entity):
         """
         Creates a flat aggregate from the given iterable of consisting entities.
         """
+        super().__init__()
         self._entities = list(entities)
 
-    @property
-    def bounds(self) -> AlignedBox:
+    def _get_bounds(self) -> AlignedBox:
         return aligned_box_union(e.bounds for e in self._entities)
 
-    @property
-    def intersect_function(self) -> Callable[[Ray, SurfaceInteraction], bool]:
+    def _make_intersect_function(self) -> Callable[[Ray, SurfaceInteraction], bool]:
         entities_intersect = tuple(e.intersect_function for e in self._entities)
 
         @njit

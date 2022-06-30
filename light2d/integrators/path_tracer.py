@@ -32,13 +32,13 @@ class PathTracer(Integrator):
         Creates a path tracer for the given entity with the specified parameters. See the class
         documentation for details about the parameters.
         """
+        super().__init__()
         self._entity = entity
         self._n_samples = np.uint32(n_samples)
         self._n_steps = np.uint32(n_steps)
         self._russian_roulette_q = np.float32(russian_roulette_q)
 
-    @property
-    def integrate_function(self) -> Callable[[AlignedBox], Spectrum]:
+    def _make_integrate_function(self) -> Callable[[AlignedBox], Spectrum]:
         n_samples = self._n_samples
         n_steps = self._n_steps
         russian_roulette_q = self._russian_roulette_q

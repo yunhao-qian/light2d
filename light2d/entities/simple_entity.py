@@ -18,15 +18,14 @@ class SimpleEntity(Entity):
         """
         Creates a simple entity with the specified shape and material.
         """
+        super().__init__()
         self._shape = shape
         self._material = material
 
-    @property
-    def bounds(self) -> AlignedBox:
+    def _get_bounds(self) -> AlignedBox:
         return self._shape.bounds
 
-    @property
-    def intersect_function(self) -> Callable[[Ray, SurfaceInteraction], bool]:
+    def _make_intersect_function(self) -> Callable[[Ray, SurfaceInteraction], bool]:
         shape_intersect = self._shape.intersect_function
         material_scatter = self._material.scatter_function
 

@@ -19,15 +19,14 @@ class Circle(Shape):
         """
         Creates a circle with the specified center and radius.
         """
+        super().__init__()
         self._center = np.array(center, np.float32)
         self._radius = np.float32(radius)
 
-    @property
-    def bounds(self) -> AlignedBox:
+    def _get_bounds(self) -> AlignedBox:
         return np.stack((self._center - self._radius, self._center + self._radius))
 
-    @property
-    def intersect_function(self) -> Callable[[Ray, SurfaceInteraction], bool]:
+    def _make_intersect_function(self) -> Callable[[Ray, SurfaceInteraction], bool]:
         center = self._center
         radius = self._radius
 

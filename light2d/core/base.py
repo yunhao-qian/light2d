@@ -72,16 +72,38 @@ class Shape(ABC):
     Base class of shapes. A shape has an axis-aligned bounding box and can be intersected by a ray.
     """
 
-    @property
+    def __init__(self):
+        self._bounds = None
+        self._intersect_function = None
+
     @abstractmethod
-    def bounds(self) -> AlignedBox:
+    def _get_bounds(self) -> AlignedBox:
         """
-        Returns the axis-aligned bounding box of this shape.
+        Calculates the axis-aligned bounding box of this shape.
+
+        Users should not call this method directly. Use the `bounds` property instead.
         """
         ...
 
     @property
+    def bounds(self) -> AlignedBox:
+        """
+        Returns the axis-aligned bounding box of this shape.
+        """
+        if self._bounds is None:
+            self._bounds = self._get_bounds()
+        return self._bounds.copy()
+
     @abstractmethod
+    def _make_intersect_function(self) -> Callable[[Ray, SurfaceInteraction], bool]:
+        """
+        Creates a JIT-ed function for intersection tests of this shape.
+
+        Users should not call this method directly. Use the `intersect_function` property instead.
+        """
+        ...
+
+    @property
     def intersect_function(self) -> Callable[[Ray, SurfaceInteraction], bool]:
         """
         Returns a JIT-ed function for intersection tests of this shape.
@@ -93,7 +115,9 @@ class Shape(ABC):
           left unchanged and should be updated later by a material instance.
         * The return value of the returned function indicates whether there is an intersection.
         """
-        ...
+        if self._intersect_function is None:
+            self._intersect_function = self._make_intersect_function()
+        return self._intersect_function
 
 
 class Material(ABC):
@@ -102,8 +126,19 @@ class Material(ABC):
     intersection.
     """
 
-    @property
+    def __init__(self):
+        self._scatter_function = None
+
     @abstractmethod
+    def _make_scatter_function(self) -> Callable[[Ray, SurfaceInteraction], None]:
+        """
+        Creates a JIT-ed function for calculations related to this material.
+
+        Users should not call this method directly. Use the `scatter_function` property instead.
+        """
+        ...
+
+    @property
     def scatter_function(self) -> Callable[[Ray, SurfaceInteraction], None]:
         """
         Returns a JIT-ed function for calculations related to this material.
@@ -114,7 +149,9 @@ class Material(ABC):
           fields (which should already been set by a shape instance) are not changed, while its
           `li`, `attenuation`, and `d_out` fields are updated.
         """
-        ...
+        if self._scatter_function is None:
+            self._scatter_function = self._make_scatter_function()
+        return self._scatter_function
 
 
 class Entity(ABC):
@@ -122,16 +159,39 @@ class Entity(ABC):
     Base class of entities. An entity is the combination of consisting shapes and materials.
     """
 
-    @property
+    def __init__(self):
+        self._bounds = None
+        self._intersect_function = None
+
     @abstractmethod
-    def bounds(self) -> AlignedBox:
+    def _get_bounds(self) -> AlignedBox:
         """
-        Returns the axis-aligned bounding box of this entity.
+        Calculates the axis-aligned bounding box of this entity.
+
+        Users should not call this method directly. Use the `bounds` property instead.
         """
         ...
 
     @property
+    def bounds(self) -> AlignedBox:
+        """
+        Returns the axis-aligned bounding box of this entity.
+        """
+        if self._bounds is None:
+            self._bounds = self._get_bounds()
+        return self._bounds.copy()
+
     @abstractmethod
+    def _make_intersect_function(self) -> Callable[[Ray, SurfaceInteraction], bool]:
+        """
+        Creates a JIT-ed function for intersection tests and material calculations related to this
+        entity.
+
+        Users should not call this method directly. Use the `intersect_function` property instead.
+        """
+        ...
+
+    @property
     def intersect_function(self) -> Callable[[Ray, SurfaceInteraction], bool]:
         """
         Returns a JIT-ed function for intersection tests and material calculations related to this
@@ -143,7 +203,9 @@ class Entity(ABC):
           will be updated on an intersection.
         * The return value of the returned function indicates whether there is an intersection.
         """
-        ...
+        if self._intersect_function is None:
+            self._intersect_function = self._make_intersect_function()
+        return self._intersect_function
 
 
 class Integrator(ABC):
@@ -152,8 +214,19 @@ class Integrator(ABC):
     intensity of each pixel, which directly corresponds to the pixel color in the output image.
     """
 
-    @property
+    def __init__(self):
+        self._integrate_function = None
+
     @abstractmethod
+    def _make_integrate_function(self) -> Callable[[AlignedBox], Spectrum]:
+        """
+        Creates a JIT-ed function for calculating the light intensity of a given pixel.
+
+        Users should not call this method directly. Use the `integrate_function` property instead.
+        """
+        ...
+
+    @property
     def integrate_function(self) -> Callable[[AlignedBox], Spectrum]:
         """
         Returns a JIT-ed function for calculating the light intensity of a given pixel.
@@ -162,4 +235,6 @@ class Integrator(ABC):
           the region occupied by this pixel.
         * The return value of the returned function is the light intensity of this pixel.
         """
-        ...
+        if self._integrate_function is None:
+            self._integrate_function = self._make_integrate_function()
+        return self._integrate_function
