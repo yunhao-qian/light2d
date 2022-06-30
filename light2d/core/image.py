@@ -8,7 +8,7 @@ import numpy as np
 from numba import njit
 from PIL import Image
 
-from .base import AlignedBox, Entity, F32Array, Integrator
+from .base import AlignedBox, F32Array, Integrator
 
 
 def render(integrator: Integrator, region: tuple[tuple[float, float], tuple[float, float]],

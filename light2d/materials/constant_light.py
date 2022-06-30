@@ -21,11 +21,11 @@ class ConstantLight(Material):
         """
         Creates a constant light whose light intensity is specified by the argument `li`.
         """
-        self.li = np.array(li, np.float32)
+        self._li = np.array(li, np.float32)
 
     @property
     def scatter_function(self) -> Callable[[Ray, SurfaceInteraction], None]:
-        li = self.li
+        li = self._li
 
         @njit
         def scatter(ray: Ray, interaction: SurfaceInteraction) -> None:

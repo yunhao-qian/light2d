@@ -19,15 +19,15 @@ class FlatAggregate(Entity):
         """
         Creates a flat aggregate from the given iterable of consisting entities.
         """
-        self.entities = list(entities)
+        self._entities = list(entities)
 
     @property
     def bounds(self) -> AlignedBox:
-        return aligned_box_union(e.bounds for e in self.entities)
+        return aligned_box_union(e.bounds for e in self._entities)
 
     @property
     def intersect_function(self) -> Callable[[Ray, SurfaceInteraction], bool]:
-        entities_intersect = tuple(e.intersect_function for e in self.entities)
+        entities_intersect = tuple(e.intersect_function for e in self._entities)
 
         @njit
         def intersect(ray: Ray, interaction: SurfaceInteraction) -> bool:
